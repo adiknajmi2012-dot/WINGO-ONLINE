@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎰 WINGO ULTIMATE AI v9.7</title>
+<style>
+  :root{
+    --bg:#07070f;--card:rgba(22,22,38,.85);--card2:rgba(30,30,52,.7);
+    --line:rgba(255,255,255,.08);--txt:#e8e8f5;--dim:#8b8ba8;
+    --acc:#7c4dff;--acc2:#00e5ff;--gold:#ffc107;--red:#e53935;--green:#43a047;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    background:
+      radial-gradient(circle at 15% 0%,rgba(124,77,255,.18),transparent 45%),
+      radial-gradient(circle at 85% 100%,rgba(0,229,255,.12),transparent 45%),
+      var(--bg);
+    color:var(--txt);min-height:100vh;padding:18px 14px 60px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .app{max-width:960px;margin:0 auto}
+  header{text-align:center;margin-bottom:22px}
+  .logo{font-size:clamp(22px,5vw,34px);font-weight:800;
+    background:linear-gradient(90deg,#ffc107,#ff5252,#7c4dff,#00e5ff);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+    filter:drop-shadow(0 0 18px rgba(124,77,255,.5));}
+  .sub{color:var(--dim);font-size:12.5px;margin-top:6px;letter-spacing:2px;text-transform:uppercase}
+  .badges{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+  .badge{font-size:11px;padding:5px 11px;border-radius:20px;
+    background:var(--card2);border:1px solid var(--line);color:var(--dim);}
+  .badge b{color:var(--acc2);font-weight:600}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:18px;margin-bottom:16px;backdrop-filter:blur(14px);
+    box-shadow:0 10px 40px rgba(0,0,0,.45);}
+  .card h2{font-size:13px;letter-spacing:1.6px;text-transform:uppercase;
+    color:var(--dim);font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+  .card h2::after{content:'';flex:1;height:1px;background:var(--line)}
+
+  textarea,input[type=text],input[type=number],input[type=password]{
+    width:100%;background:rgba(0,0,0,.35);border:1px solid var(--line);
+    border-radius:12px;color:var(--txt);padding:13px 14px;font-size:15px;
+    font-family:'SF Mono',Consolas,monospace;letter-spacing:1.5px;outline:none;
+    transition:.2s;resize:vertical;
+  }
+  textarea:focus,input:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(124,77,255,.18)}
+  .hint{font-size:12px;color:var(--dim);margin-top:8px;line-height:1.7}
+  .hint code{background:rgba(124,77,255,.18);padding:2px 6px;border-radius:5px;color:#c3aaff;font-size:11.5px}
+
+  .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+  .row>*{flex:1;min-width:130px}
+
+  button{cursor:pointer;border:none;border-radius:12px;padding:13px 18px;
+    font-size:14px;font-weight:700;font-family:inherit;letter-spacing:.4px;
+    transition:transform .15s,box-shadow .2s,filter .2s;color:#fff;}
+  button:active{transform:scale(.97)}
+  .btn-primary{background:linear-gradient(135deg,#7c4dff,#00b0ff);box-shadow:0 6px 22px rgba(124,77,255,.4)}
+  .btn-primary:hover{filter:brightness(1.12)}
+  .btn-gold{background:linear-gradient(135deg,#ff9800,#ffc107);color:#1a1200;box-shadow:0 6px 22px rgba(255,193,7,.3)}
+  .btn-ghost{background:rgba(255,255,255,.06);border:1px solid var(--line);color:var(--dim)}
+  .btn-ghost:hover{background:rgba(255,255,255,.12);color:var(--txt)}
+  .btn-green{background:linear-gradient(135deg,#2e7d32,#43a047);box-shadow:0 6px 22px rgba(67,160,71,.3)}
+  .btn-red{background:linear-gradient(135deg,#b71c1c,#e53935);box-shadow:0 6px 22px rgba(229,57,53,.3)}
+
+  .balls{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+  .ball{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-weight:800;font-size:15px;color:#fff;box-shadow:0 3px 12px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.28);
+    flex-shrink:0;animation:pop .3s ease backwards;}
+  @keyframes pop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+  .ball.sm{width:28px;height:28px;font-size:12px}
+  .ball.xl{width:76px;height:76px;font-size:34px;box-shadow:0 6px 26px rgba(0,0,0,.6),inset 0 2px 0 rgba(255,255,255,.3)}
+  .ball.ghost{background:rgba(255,255,255,.06)!important;color:var(--dim);box-shadow:none;font-size:11px}
+
+  #result{display:none}
+  .result-top{display:flex;gap:20px;align-items:center;flex-wrap:wrap;padding:16px;border-radius:14px;
+    background:linear-gradient(135deg,rgba(124,77,255,.14),rgba(0,229,255,.08));
+    border:1px solid rgba(124,77,255,.25);}
+  .result-info{flex:1;min-width:220px}
+  .result-label{font-size:11.5px;letter-spacing:2px;color:var(--dim);text-transform:uppercase}
+  .result-num{font-size:30px;font-weight:800;margin:2px 0 8px}
+  .result-num small{font-size:14px;color:var(--dim);font-weight:600;margin-left:8px}
+  .conf-big{font-size:32px;font-weight:800;color:var(--gold);line-height:1}
+  .conf-big span{font-size:16px;color:var(--dim)}
+  .quality{font-size:15px;font-weight:700;margin-top:6px}
+
+  .bar-wrap{height:14px;border-radius:10px;background:rgba(0,0,0,.45);overflow:hidden;margin-top:12px;border:1px solid var(--line)}
+  .bar-fill{height:100%;border-radius:10px;width:0;
+    background:linear-gradient(90deg,#43a047,#ffc107,#ff5252);
+    transition:width .8s cubic-bezier(.2,.8,.3,1);box-shadow:0 0 16px rgba(255,193,7,.5)}
+
+  .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:14px}
+  .stat{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:11px 13px;}
+  .stat .k{font-size:10.5px;letter-spacing:1.2px;color:var(--dim);text-transform:uppercase}
+  .stat .v{font-size:16px;font-weight:700;margin-top:4px}
+
+  .top3{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+  .top3 .t{flex:1;min-width:110px;text-align:center;padding:12px 8px;border-radius:12px;
+    background:var(--card2);border:1px solid var(--line);}
+  .top3 .t .rank{font-size:11px;color:var(--dim);letter-spacing:1px}
+  .top3 .t .n{font-size:22px;font-weight:800;margin:5px 0 3px}
+  .top3 .t .s{font-size:12px;color:var(--acc2)}
+
+  .scores{display:grid;grid-template-columns:repeat(auto-fit,minmax(78px,1fr));gap:8px;margin-top:12px}
+  .score-item{background:rgba(0,0,0,.28);border:1px solid var(--line);border-radius:10px;
+    padding:8px 6px;text-align:center;transition:.2s;}
+  .score-item.pick{border-color:var(--gold);background:rgba(255,193,7,.14);box-shadow:0 0 14px rgba(255,193,7,.25)}
+  .score-item .sn{font-weight:800;font-size:15px}
+  .score-item .sv{font-size:11px;color:var(--dim);margin-top:2px}
+  .mini-bar{height:4px;border-radius:3px;background:rgba(255,255,255,.1);margin-top:5px;overflow:hidden}
+  .mini-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--acc),var(--acc2));border-radius:3px}
+
+  #backtestOut{display:none;margin-top:14px}
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  td{padding:8px 6px;border-bottom:1px solid var(--line)}
+  td:last-child{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+  .base{color:var(--dim);font-size:11.5px;font-weight:500}
+  .detail-log{max-height:220px;overflow-y:auto;background:rgba(0,0,0,.32);border:1px solid var(--line);
+    border-radius:10px;padding:10px;margin-top:12px;
+    font-family:'SF Mono',Consolas,monospace;font-size:12px;line-height:1.9;color:var(--dim);}
+  .detail-log .ok{color:#66bb6a}
+  .detail-log .mid{color:var(--gold)}
+  .detail-log .no{color:#ef5350}
+  .verdict{margin-top:12px;padding:12px;border-radius:12px;text-align:center;
+    font-weight:800;font-size:14px;letter-spacing:.5px;}
+  .v-good{background:rgba(67,160,71,.16);border:1px solid rgba(67,160,71,.4);color:#81c784}
+  .v-mid{background:rgba(255,193,7,.14);border:1px solid rgba(255,193,7,.35);color:var(--gold)}
+  .v-bad{background:rgba(229,57,53,.14);border:1px solid rgba(229,57,53,.35);color:#ef5350}
+
+  .quick-add{display:flex;gap:8px;margin-top:12px}
+  .quick-add input{flex:1;text-align:center;font-size:20px;font-weight:800}
+  .quick-add button{flex:0 0 auto;padding:13px 22px}
+
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(120%);
+    background:rgba(30,30,52,.97);border:1px solid var(--line);padding:12px 22px;border-radius:30px;
+    font-size:13.5px;font-weight:600;transition:transform .35s cubic-bezier(.2,.9,.3,1);
+    z-index:9999;box-shadow:0 10px 40px rgba(0,0,0,.6);max-width:90vw;text-align:center;}
+  .toast.show{transform:translateX(-50%) translateY(0)}
+
+  .disclaimer{text-align:center;font-size:11.5px;color:var(--dim);margin-top:20px;
+    line-height:1.8;padding:14px;border:1px dashed rgba(255,255,255,.12);border-radius:14px;}
+  ::-webkit-scrollbar{width:8px;height:8px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:8px}
+
+  .auth-screen{position:fixed;inset:0;z-index:200;display:flex;overflow-y:auto;padding:26px 16px;
+    background:
+      radial-gradient(circle at 15% 0%,rgba(124,77,255,.22),transparent 45%),
+      radial-gradient(circle at 85% 100%,rgba(0,229,255,.14),transparent 45%),
+      var(--bg);}
+  .auth-box{margin:auto;width:100%;max-width:440px}
+  .auth-tabs{display:flex;gap:6px;background:rgba(0,0,0,.4);padding:5px;
+    border-radius:14px;border:1px solid var(--line);margin-bottom:6px;}
+  .auth-tab{flex:1;padding:10px 6px;border-radius:10px;background:transparent;
+    color:var(--dim);font-size:12.5px;font-weight:700;}
+  .auth-tab.active{background:linear-gradient(135deg,#7c4dff,#00b0ff);color:#fff;box-shadow:0 4px 16px rgba(124,77,255,.4)}
+  .fl{display:block;font-size:11px;letter-spacing:1.3px;text-transform:uppercase;
+    color:var(--dim);margin:13px 0 6px;font-weight:700}
+  .msg{margin-top:12px;padding:10px 13px;border-radius:10px;font-size:12.5px;font-weight:600;display:none;}
+  .msg.err{display:block;background:rgba(229,57,53,.15);border:1px solid rgba(229,57,53,.4);color:#ef5350}
+  .msg.ok{display:block;background:rgba(67,160,71,.15);border:1px solid rgba(67,160,71,.4);color:#81c784}
+
+  .userbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:10px 14px;margin-bottom:16px;backdrop-filter:blur(14px);font-size:13px;}
+  .who{display:flex;align-items:center;gap:8px;color:var(--dim);flex-wrap:wrap}
+  .who b{color:var(--txt)}
+  .tag{font-size:9.5px;padding:3px 8px;border-radius:20px;font-weight:800;letter-spacing:.7px}
+  .tag-green{background:rgba(67,160,71,.2);color:#81c784;border:1px solid rgba(67,160,71,.45)}
+  .tag-red{background:rgba(229,57,53,.2);color:#ef5350;border:1px solid rgba(229,57,53,.45)}
+  .tag-gold{background:rgba(255,193,7,.18);color:var(--gold);border:1px solid rgba(255,193,7,.45)}
+  .tag-blue{background:rgba(0,229,255,.15);color:var(--acc2);border:1px solid rgba(0,229,255,.4)}
+
+  .urow{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+    background:var(--card2);border:1px solid var(--line);border-radius:12px;
+    padding:11px 13px;margin-bottom:8px;}
+  .urow.banned{opacity:.62;border-color:rgba(229,57,53,.35)}
+  .uname{font-weight:700;font-size:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .umeta{font-size:11.5px;color:var(--dim);margin-top:4px;line-height:1.6}
+  .ubtns{display:flex;gap:6px;flex-wrap:wrap}
+  .ubtns button{padding:8px 12px;font-size:12px;border-radius:9px}
+
+  .actrow{display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);}
+  .actrow:last-child{border-bottom:none}
+  .actrow .tm{color:#5f5f7a;flex:0 0 auto;font-size:11px}
+  .actrow .bd{flex:1;min-width:0;word-break:break-word}
+  .actrow .us{color:var(--acc2);font-weight:700}
+
+  .admin-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px;}
+  .admin-head .t{font-size:clamp(18px,4vw,26px);font-weight:800;
+    background:linear-gradient(90deg,#ffc107,#7c4dff,#00e5ff);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .admin-head .s{font-size:11.5px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;margin-top:4px}
+
+  .empty{color:var(--dim);font-size:12.5px;padding:12px 0;text-align:center}
+
+  .wa-box{text-align:center;margin-top:14px}
+  .wa-box .lbl{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);margin-bottom:8px;font-weight:700}
+  .wa-link{display:inline-flex;align-items:center;gap:8px;padding:11px 20px;border-radius:30px;
+    background:linear-gradient(135deg,#25d366,#128c7e);color:#fff;font-weight:800;font-size:13px;
+    text-decoration:none;box-shadow:0 6px 22px rgba(37,211,102,.35);transition:transform .15s,filter .2s;}
+  .wa-link:hover{filter:brightness(1.1);transform:translateY(-1px)}
+  .wa-inline{color:#25d366;font-weight:800;text-decoration:none;border-bottom:1px dashed rgba(37,211,102,.5)}
+
+  .save-pill{font-size:10px;padding:3px 9px;border-radius:20px;background:rgba(255,255,255,.06);
+    color:var(--dim);border:1px solid var(--line);font-weight:800;letter-spacing:.5px;
+    opacity:0;transition:opacity .3s,background .3s,color .3s;}
+  .save-pill.show{opacity:1}
+  .save-pill.saving{background:rgba(255,193,7,.18);color:var(--gold);border-color:rgba(255,193,7,.4)}
+  .save-pill.saved{background:rgba(67,160,71,.2);color:#81c784;border-color:rgba(67,160,71,.45)}
+
+  .loading{text-align:center;padding:40px 20px;color:var(--dim);font-size:14px}
+  .loading .sp{display:inline-block;width:30px;height:30px;border:3px solid rgba(124,77,255,.3);
+    border-top-color:var(--acc);border-radius:50%;animation:spin 1s linear infinite;margin-bottom:12px;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     AUTH SCREEN
+     ============================================================ -->
+<div class="auth-screen" id="authScreen">
+  <div class="auth-box">
+    <header>
+      <div class="logo">🎰 WINGO ULTIMATE AI</div>
+      <div class="sub">v9.7 • Server Malaysia</div>
+    </header>
+
+    <div class="card">
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-tab="login" onclick="switchTab('login')">🔑 Masuk</button>
+        <button class="auth-tab" data-tab="signup" onclick="switchTab('signup')">📝 Daftar</button>
+        <button class="auth-tab" data-tab="admin" onclick="switchTab('admin')">🛡️ Admin</button>
+      </div>
+
+      <div id="pane-login">
+        <label class="fl">Nama Pengguna</label>
+        <input type="text" id="loginUser" placeholder="username" autocomplete="username">
+        <label class="fl">Kata Laluan</label>
+        <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password">
+        <button class="btn-primary" style="width:100%;margin-top:16px" onclick="doLogin()">🔓 Masuk</button>
+        <div class="hint">Belum ada akaun? Klik tab <b>Daftar</b>.</div>
+        <div class="msg" id="loginMsg"></div>
+      </div>
+
+      <div id="pane-signup" style="display:none">
+        <label class="fl">Nama Pengguna</label>
+        <input type="text" id="suUser" placeholder="3-20 aksara (a-z, 0-9, _)" autocomplete="username">
+        <label class="fl">Kata Laluan</label>
+        <input type="password" id="suPass" placeholder="minimum 4 aksara" autocomplete="new-password">
+        <label class="fl">Sahkan Kata Laluan</label>
+        <input type="password" id="suPass2" placeholder="ulang kata laluan" autocomplete="new-password">
+        <button class="btn-green" style="width:100%;margin-top:16px" onclick="doSignup()">✅ Cipta Akaun</button>
+        <div class="msg" id="signupMsg"></div>
+      </div>
+
+      <div id="pane-admin" style="display:none">
+        <label class="fl">Nama Pengguna Admin</label>
+        <input type="text" id="adUser" placeholder="admin" autocomplete="username">
+        <label class="fl">Kata Laluan Admin</label>
+        <input type="password" id="adPass" placeholder="••••••••" autocomplete="current-password">
+        <button class="btn-gold" style="width:100%;margin-top:16px" onclick="doAdminLogin()">🛡️ Masuk Panel Admin</button>
+        <div class="msg" id="adminMsg"></div>
+      </div>
+    </div>
+
+    <div class="disclaimer" style="margin-top:0">
+      🌐 Data disimpan di <b>server</b> — boleh diakses dari mana-mana di Malaysia.
+    </div>
+
+    <div class="wa-box">
+      <div class="lbl">Hubungi Admin</div>
+      <a class="wa-link" href="https://wa.me/+60132679896" target="_blank" rel="noopener noreferrer">
+        📱 WhatsApp Admin · +60132679896
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     ADMIN PANEL
+     ============================================================ -->
+<div class="auth-screen" id="adminScreen" style="display:none">
+  <div class="app" style="margin:auto;width:100%">
+    <div class="userbar">
+      <div class="who">🛡️ <b>admin</b> <span class="tag tag-gold">ADMIN</span></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <a class="wa-link" style="padding:9px 14px;font-size:12.5px" href="https://wa.me/+60132679896" target="_blank" rel="noopener noreferrer">📱 +60132679896</a>
+        <button class="btn-ghost" style="padding:9px 14px;font-size:12.5px" onclick="openToolAsAdmin()">🧪 Buka Alat</button>
+        <button class="btn-ghost" style="padding:9px 14px;font-size:12.5px" onclick="logout()">🚪 Log Keluar</button>
+      </div>
+    </div>
+
+    <div class="admin-head">
+      <div>
+        <div class="t">🛡️ PANEL ADMIN</div>
+        <div class="s">Pengurusan Pengguna & Aktiviti · Server Malaysia</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📊 Ringkasan Sistem</h2>
+      <div class="stat-grid" id="adminStats"><div class="loading"><div class="sp"></div><br>Memuatkan…</div></div>
+    </div>
+
+    <div class="card">
+      <h2>➕ Cipta Akaun Pengguna</h2>
+      <div class="row" style="margin-top:0">
+        <input type="text" id="newUserName" placeholder="nama pengguna">
+        <input type="password" id="newUserPass" placeholder="kata laluan">
+        <button class="btn-green" onclick="adminCreateUser()">➕ Cipta</button>
+      </div>
+      <div class="msg" id="createMsg"></div>
+    </div>
+
+    <div class="card">
+      <h2>👥 Senarai Pengguna</h2>
+      <div id="userList"><div class="loading"><div class="sp"></div></div></div>
+    </div>
+
+    <div class="card">
+      <h2>📜 Log Aktiviti</h2>
+      <div class="row" style="margin-top:0">
+        <input type="text" id="actFilter" placeholder="🔍 Tapis ikut nama…" oninput="renderActivity()">
+        <button class="btn-ghost" onclick="clearActivity()">🧹 Kosongkan</button>
+      </div>
+      <div class="detail-log" id="activityLog" style="max-height:440px"></div>
+    </div>
+
+    <div class="disclaimer">
+      ⚠️ Segala tindakan direkodkan di server.<br><br>
+      📱 Sokongan: <a class="wa-inline" href="https://wa.me/+60132679896" target="_blank" rel="noopener noreferrer">+60132679896</a>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MAIN APP
+     ============================================================ -->
+<div class="app" id="appWrap" style="display:none">
+  <div class="userbar">
+    <div class="who">👤 <b id="uName">—</b> <span class="tag tag-blue" id="uRole">USER</span>
+      <span class="save-pill" id="saveIndicator">💾</span>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <a class="wa-link" style="padding:9px 14px;font-size:12.5px" href="https://wa.me/+60132679896" target="_blank" rel="noopener noreferrer">📱 Admin</a>
+      <button class="btn-ghost" id="backAdminBtn" style="display:none;padding:9px 14px;font-size:12.5px" onclick="backToAdmin()">⬅️ Kembali</button>
+      <button class="btn-ghost" style="padding:9px 14px;font-size:12.5px" onclick="logout()">🚪 Log Keluar</button>
+    </div>
+  </div>
+
+  <header>
+    <div class="logo">🎰 WINGO ULTIMATE AI</div>
+    <div class="sub">v9.7 • 20 Modul Neural Engine • Server Malaysia</div>
+    <div class="badges">
+      <span class="badge">🧠 <b>20</b> Modul AI</span>
+      <span class="badge">🎯 Keyakinan <b>1–100%</b></span>
+      <span class="badge">💾 Auto-Save <b>Server</b></span>
+      <span class="badge">🌐 <b>Malaysia</b></span>
+    </div>
+  </header>
+
+  <div class="card">
+    <h2>📥 Sejarah Nombor</h2>
+    <textarea id="historyInput" rows="3"
+      placeholder="Taip nombor TERKINI di depan...&#10;Contoh: 3 7 1 9 5 2 8 0 4 6"></textarea>
+    <div class="hint">
+      💡 Boleh guna jarak: <code>3 7 1 9</code> atau koma: <code>3,7,1,9</code>
+      — <b>Nombor terkini di depan (kiri)</b><br>
+      💾 <b>Auto-save ke server</b> — data disimpan automatik.
+    </div>
+    <div class="row">
+      <button class="btn-primary" onclick="runAnalysis()">🔮 Analisis &amp; Ramalan</button>
+      <button class="btn-ghost" onclick="loadDemo()">🎲 Demo Data</button>
+      <button class="btn-ghost" onclick="clearAll()">🗑️ Padam</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>➕ Tambah Nombor Keluar</h2>
+    <div class="quick-add">
+      <input type="number" id="quickNum" min="0" max="9" placeholder="0-9">
+      <button class="btn-green" onclick="quickAdd()">Tambah</button>
+    </div>
+    <div class="balls" id="historyBalls"></div>
+  </div>
+
+  <div class="card" id="result">
+    <h2>🎯 Keputusan Ramalan</h2>
+    <div class="result-top">
+      <div id="bigBallWrap"></div>
+      <div class="result-info">
+        <div class="result-label">Cadangan Utama</div>
+        <div class="result-num" id="resNum">—</div>
+        <div class="result-label">Keyakinan</div>
+        <div class="conf-big" id="resConf">0<span>%</span></div>
+        <div class="quality" id="resQuality"></div>
+      </div>
+    </div>
+    <div class="bar-wrap"><div class="bar-fill" id="confBar"></div></div>
+    <div class="stat-grid">
+      <div class="stat"><div class="k">Zon</div><div class="v" id="resZone">—</div></div>
+      <div class="stat"><div class="k">Warna</div><div class="v" id="resColor">—</div></div>
+      <div class="stat"><div class="k">Parity</div><div class="v" id="resParity">—</div></div>
+      <div class="stat"><div class="k">Faktor Sah</div><div class="v" id="resStrength">—</div></div>
+    </div>
+    <div class="top3" id="top3"></div>
+    <h2 style="margin-top:20px">📊 Skor Semua Nombor</h2>
+    <div class="scores" id="scoresGrid"></div>
+  </div>
+
+  <div class="card">
+    <h2>🧪 Backtest Accuracy</h2>
+    <div class="row" style="margin-top:0">
+      <button class="btn-gold" onclick="runBacktest()">▶️ Jalankan Backtest (20 sampel)</button>
+    </div>
+    <div id="backtestOut"></div>
+  </div>
+
+  <div class="disclaimer">
+    ⚠️ <b>Penafian:</b> Alat ini adalah ujian statistik &amp; analisis corak semata-mata.<br>
+    Wingo adalah permainan rawak — tiada sistem boleh menjamin kemenangan. Main secara berhemah.
+  </div>
+
+  <div class="wa-box">
+    <div class="lbl">Pertanyaan / Sokongan</div>
+    <a class="wa-link" href="https://wa.me/+60132679896" target="_blank" rel="noopener noreferrer">
+      📱 WhatsApp Admin · +60132679896
+    </a>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   API CONFIG
+   ============================================================ */
+const API_BASE = location.protocol === 'file:' ? 'http://localhost:3000' : '';
+
+let AUTH_TOKEN = localStorage.getItem('wingo_token') || '';
+let CURRENT_USER = (() => {
+  try { return JSON.parse(localStorage.getItem('wingo_user') || 'null'); }
+  catch(e){ return null; }
+})();
+
+async function api(path, opts = {}){
+  const headers = { 'Content-Type': 'application/json' };
+  if (AUTH_TOKEN) headers['Authorization'] = 'Bearer ' + AUTH_TOKEN;
+  let res;
+  try {
+    res = await fetch(API_BASE + path, {
+      method: opts.method || 'GET',
+      headers,
+      body: opts.body ? JSON.stringify(opts.body) : undefined
+    });
+  } catch(e){ throw new Error('Tidak dapat hubungi server'); }
+  let data = {};
+  try { data = await res.json(); } catch(e){}
+  if (!res.ok){
+    const err = new Error(data.error || 'Ralat pelayan');
+    err.status = res.status;
+    throw err;
+  }
+  return data;
+}
+function setToken(t){
+  AUTH_TOKEN = t || '';
+  t ? localStorage.setItem('wingo_token', t) : localStorage.removeItem('wingo_token');
+}
+function setCurrentUser(u){
+  CURRENT_USER = u;
+  u ? localStorage.setItem('wingo_user', JSON.stringify(u)) : localStorage.removeItem('wingo_user');
+}
+
+/* ============================================================
+   KONFIGURASI AI
+   ============================================================ */
+const COLOR = {0:"🔴🟣",1:"🟢",2:"🔴",3:"🟢",4:"🔴",5:"🟢🟣",6:"🔴",7:"🟢",8:"🔴",9:"🟢"};
+const COLOR_NAME = {0:"RED-PURPLE",1:"GREEN",2:"RED",3:"GREEN",4:"RED",5:"GREEN-PURPLE",6:"RED",7:"GREEN",8:"RED",9:"GREEN"};
+const CAT = n => n <= 4 ? "SMALL" : "BIG";
+const PARITY = n => n % 2 === 0 ? "EVEN" : "ODD";
+
+const WEIGHTS = {
+  markov1:0.10, markov2:0.09, markov3:0.07, markov4:0.05, markov5:0.03,
+  freq_multi:0.10, freq_delta:0.05,
+  pattern:0.08, mirror:0.03,
+  streak_pen:0.06, anti_streak:0.04,
+  momentum:0.04, velocity:0.03, accel:0.02, volatility:0.03,
+  chaos:0.03,
+  zone_trans:0.05, color_trans:0.04, parity_trans:0.03,
+  gap_return:0.03
+};
+
+const sum = a => a.reduce((x,y)=>x+y, 0);
+const avg = a => a.length ? sum(a)/a.length : 0;
+function counter(arr){
+  const c = {};
+  for (const v of arr) c[v] = (c[v]||0)+1;
+  return c;
+}
+
+/* ============================================================
+   ENGINE: MARKOV
+   ============================================================ */
+class MarkovEngine {
+  constructor(h){ this.seq = [...h].reverse(); }
+  build(order){
+    const m = new Map();
+    for (let i = 0; i < this.seq.length - order; i++){
+      const key = this.seq.slice(i, i+order).join(',');
+      const nxt = this.seq[i+order];
+      if (!m.has(key)) m.set(key, {});
+      const c = m.get(key); c[nxt] = (c[nxt]||0)+1;
+    }
+    return m;
+  }
+  predict(order){
+    if (this.seq.length < order + 1) return {};
+    const m = this.build(order);
+    const c = m.get(this.seq.slice(-order).join(','));
+    if (!c) return {};
+    const tot = sum(Object.values(c));
+    if (!tot) return {};
+    const out = {};
+    for (const k in c) out[k] = c[k]/tot;
+    return out;
+  }
+  strength(order){
+    const m = this.build(order);
+    const c = m.get(this.seq.slice(-order).join(','));
+    return c ? sum(Object.values(c)) : 0;
+  }
+  entropy(order){
+    const p = this.predict(order);
+    const vals = Object.values(p);
+    if (!vals.length) return 0;
+    let s = 0;
+    for (const v of vals) if (v > 0) s -= v * Math.log2(v);
+    return s;
+  }
+}
+
+/* ============================================================
+   ENGINE: FREQUENCY
+   ============================================================ */
+class FrequencyEngine {
+  constructor(h){ this.history = h; }
+  win(size){ return counter(this.history.slice(0, size)); }
+  multi_score(){
+    const w3=this.win(3), w5=this.win(5), w10=this.win(10),
+          w15=this.win(15), w30=this.win(30), w50=this.win(50);
+    const total = Math.max(1, this.history.length);
+    const wg = this.win(total);
+    const out = {};
+    for (let n = 0; n < 10; n++){
+      const s3  = -Math.abs((w3[n]||0)  - 0.3);
+      const s5  = -Math.abs((w5[n]||0)  - 0.5);
+      const s10 = -Math.abs((w10[n]||0) - 1.0);
+      const s15 = -Math.abs((w15[n]||0) - 1.5);
+      const s30 = -Math.abs((w30[n]||0) - 3.0);
+      const s50 = -Math.abs((w50[n]||0) - 5.0);
+      const sg  = -Math.abs((wg[n]||0) - total/10) / Math.max(1, total/10);
+      out[n] = (s3*1.5 + s5*1.2 + s10 + s15*0.8 + s30*0.5 + s50*0.3 + sg*0.4) / 5.7;
+    }
+    return out;
+  }
+  delta_score(){
+    const recent = this.win(5);
+    const prev = counter(this.history.slice(5, 10));
+    const out = {};
+    for (let n = 0; n < 10; n++) out[n] = (recent[n]||0) - (prev[n]||0);
+    return out;
+  }
+}
+
+/* ============================================================
+   ENGINE: PATTERN
+   ============================================================ */
+class PatternEngine {
+  constructor(h){ this.seq = [...h].reverse(); }
+  match(pat){
+    if (this.seq.length < pat.length) return false;
+    const tail = this.seq.slice(-pat.length);
+    for (let i = 0; i < pat.length; i++) if (tail[i] !== pat[i]) return false;
+    return true;
+  }
+  predict(maxLen = 5){
+    const preds = {};
+    const w = {2:1.0, 3:1.8, 4:2.5, 5:3.0};
+    for (let L = 2; L <= maxLen; L++){
+      for (let i = 0; i < this.seq.length - L; i++){
+        const pat = this.seq.slice(i, i+L);
+        if (this.match(pat) && i + L < this.seq.length){
+          const nx = this.seq[i+L];
+          preds[nx] = (preds[nx]||0) + (w[L] || 1.0);
+        }
+      }
+    }
+    return preds;
+  }
+  mirror(){
+    for (let L = 2; L <= 5; L++){
+      if (this.seq.length < L*2) continue;
+      const a = this.seq.slice(-L);
+      const b = this.seq.slice(-L*2, -L).reverse();
+      let ok = true;
+      for (let i = 0; i < L; i++) if (a[i] !== b[i]){ ok = false; break; }
+      if (ok) return [true, L];
+    }
+    return [false, 0];
+  }
+}
+
+/* ============================================================
+   ENGINE: STREAK
+   ============================================================ */
+class StreakEngine {
+  constructor(h){ this.history = h; }
+  current(num){
+    let s = 0;
+    for (const n of this.history){ if (n === num) s++; else break; }
+    return s;
+  }
+  penalty(){
+    const out = {};
+    for (let n = 0; n < 10; n++) out[n] = -(Math.pow(this.current(n), 2)) * 1.5;
+    return out;
+  }
+  anti_streak_bonus(){
+    const gaps = {};
+    for (let n = 0; n < 10; n++){
+      let gap = 999;
+      for (let i = 0; i < this.history.length; i++){
+        if (this.history[i] === n){ gap = i; break; }
+      }
+      gaps[n] = gap;
+    }
+    const mx = Math.max(...Object.values(gaps)) || 1;
+    const out = {};
+    for (let n = 0; n < 10; n++) out[n] = (gaps[n]/mx) * 2;
+    return out;
+  }
+}
+
+/* ============================================================
+   ENGINE: DYNAMIC
+   ============================================================ */
+class DynamicEngine {
+  constructor(h){ this.history = h; }
+  momentum(w = 10){
+    if (this.history.length < w) return 0;
+    const r = this.history.slice(0, w);
+    const o = this.history.length >= w*2 ? this.history.slice(w, w*2) : r;
+    return avg(r) - avg(o);
+  }
+  velocity(w = 5){
+    if (this.history.length < w + 1) return 0;
+    const d = [];
+    for (let i = 0; i < w; i++) d.push(this.history[i] - this.history[i+1]);
+    return avg(d);
+  }
+  acceleration(w = 5){
+    if (this.history.length < w + 3) return 0;
+    const vNow = this.velocity(3);
+    const sub = this.history.slice(w, w+4);
+    if (sub.length < 4) return 0;
+    const d = [];
+    for (let i = 0; i < sub.length - 1; i++) d.push(sub[i] - sub[i+1]);
+    const vPrev = d.length ? avg(d) : 0;
+    return vNow - vPrev;
+  }
+  volatility(w = 10){
+    const x = this.history.slice(0, w);
+    if (x.length < 2) return 0;
+    const m = avg(x);
+    return Math.sqrt(sum(x.map(v => Math.pow(v - m, 2))) / x.length);
+  }
+}
+
+/* ============================================================
+   ENGINE: TRANSITION
+   ============================================================ */
+class ZoneTransition {
+  constructor(h){ this.seq = [...h].reverse(); }
+  predict(){
+    if (this.seq.length < 2) return [null, {}];
+    const m = {S:{}, B:{}};
+    for (let i = 0; i < this.seq.length - 1; i++){
+      const cur = this.seq[i] <= 4 ? 'S' : 'B';
+      const nxt = this.seq[i+1] <= 4 ? 'S' : 'B';
+      m[cur][nxt] = (m[cur][nxt]||0) + 1;
+    }
+    const cur = this.seq[this.seq.length-1] <= 4 ? 'S' : 'B';
+    const tot = sum(Object.values(m[cur]));
+    if (!tot) return [null, {}];
+    const probs = {};
+    for (const k in m[cur]) probs[k] = m[cur][k]/tot;
+    let best = null, bv = -1;
+    for (const k in probs) if (probs[k] > bv){ bv = probs[k]; best = k; }
+    return [best, probs];
+  }
+}
+class ColorTransition {
+  constructor(h){ this.seq = [...h].reverse(); }
+  _c(n){ return (n === 0 || n === 2 || n === 4 || n === 6 || n === 8) ? 'R' : 'G'; }
+  predict(){
+    if (this.seq.length < 2) return [null, {}];
+    const m = {R:{}, G:{}};
+    for (let i = 0; i < this.seq.length - 1; i++){
+      const cur = this._c(this.seq[i]);
+      const nxt = this._c(this.seq[i+1]);
+      m[cur][nxt] = (m[cur][nxt]||0) + 1;
+    }
+    const cur = this._c(this.seq[this.seq.length-1]);
+    const tot = sum(Object.values(m[cur]));
+    if (!tot) return [null, {}];
+    const probs = {};
+    for (const k in m[cur]) probs[k] = m[cur][k]/tot;
+    let best = null, bv = -1;
+    for (const k in probs) if (probs[k] > bv){ bv = probs[k]; best = k; }
+    return [best, probs];
+  }
+}
+class ParityTransition {
+  constructor(h){ this.seq = [...h].reverse(); }
+  predict(){
+    if (this.seq.length < 2) return [null, {}];
+    const m = {E:{}, O:{}};
+    for (let i = 0; i < this.seq.length - 1; i++){
+      const cur = this.seq[i] % 2 === 0 ? 'E' : 'O';
+      const nxt = this.seq[i+1] % 2 === 0 ? 'E' : 'O';
+      m[cur][nxt] = (m[cur][nxt]||0) + 1;
+    }
+    const cur = this.seq[this.seq.length-1] % 2 === 0 ? 'E' : 'O';
+    const tot = sum(Object.values(m[cur]));
+    if (!tot) return [null, {}];
+    const probs = {};
+    for (const k in m[cur]) probs[k] = m[cur][k]/tot;
+    let best = null, bv = -1;
+    for (const k in probs) if (probs[k] > bv){ bv = probs[k]; best = k; }
+    return [best, probs];
+  }
+}
+
+/* ============================================================
+   ENGINE: GAP
+   ============================================================ */
+class GapEngine {
+  constructor(h){ this.history = h; }
+  avg_gap(num){
+    const pos = [];
+    for (let i = 0; i < this.history.length; i++) if (this.history[i] === num) pos.push(i);
+    if (pos.length < 2) return 999;
+    const gaps = [];
+    for (let i = 0; i < pos.length - 1; i++) gaps.push(pos[i] - pos[i+1]);
+    return avg(gaps);
+  }
+  ratio(num){
+    const a = this.avg_gap(num);
+    if (a === 999) return 0;
+    let gap = 999;
+    for (let i = 0; i < this.history.length; i++){
+      if (this.history[i] === num){ gap = i; break; }
+    }
+    return a > 0 ? gap / a : 0;
+  }
+  all_ratios(){
+    const out = {};
+    for (let n = 0; n < 10; n++) out[n] = this.ratio(n);
+    return out;
+  }
+}
+
+/* ============================================================
+   NEURAL ENGINE (TERAS)
+   ============================================================ */
+class NeuralEngine {
+  constructor(history){
+    this.h  = history;
+    this.mk = new MarkovEngine(history);
+    this.fq = new FrequencyEngine(history);
+    this.pt = new PatternEngine(history);
+    this.st = new StreakEngine(history);
+    this.dy = new DynamicEngine(history);
+    this.zn = new ZoneTransition(history);
+    this.cl = new ColorTransition(history);
+    this.pr = new ParityTransition(history);
+    this.gp = new GapEngine(history);
+  }
+  compute(){
+    const scores = {};
+    for (let n = 0; n < 10; n++) scores[n] = 0;
+    for (const order of [1,2,3,4,5]){
+      const probs = this.mk.predict(order);
+      const w = WEIGHTS['markov'+order] * 100;
+      for (let n = 0; n < 10; n++) scores[n] += (probs[n] || 0) * w;
+    }
+    const fsc = this.fq.multi_score();
+    for (let n = 0; n < 10; n++) scores[n] += fsc[n] * WEIGHTS.freq_multi * 100;
+    const dsc = this.fq.delta_score();
+    for (let n = 0; n < 10; n++) scores[n] += dsc[n] * WEIGHTS.freq_delta * 30;
+    const pp = this.pt.predict();
+    const totP = sum(Object.values(pp)) || 1;
+    for (let n = 0; n < 10; n++) scores[n] += ((pp[n]||0)/totP) * WEIGHTS.pattern * 100;
+    const [mir, mlen] = this.pt.mirror();
+    if (mir){ for (let n = 0; n < 10; n++) scores[n] += (mlen * 1.5) * WEIGHTS.mirror; }
+    const sp = this.st.penalty();
+    for (let n = 0; n < 10; n++) scores[n] += sp[n] * WEIGHTS.streak_pen * 10;
+    const asb = this.st.anti_streak_bonus();
+    for (let n = 0; n < 10; n++) scores[n] += asb[n] * WEIGHTS.anti_streak * 10;
+    const mom = this.dy.momentum();
+    const vel = this.dy.velocity();
+    const acc = this.dy.acceleration();
+    const vol = this.dy.volatility();
+    const mv = this.h.length ? sum(this.h.slice(0,20)) / Math.min(20, this.h.length) : 5;
+    for (let n = 0; n < 10; n++){
+      scores[n] += -Math.abs(n - mom) * WEIGHTS.momentum * 10;
+      scores[n] += -Math.abs(n - (mom + vel)) * WEIGHTS.velocity * 5;
+      scores[n] += -Math.abs(n - (mom + acc)) * WEIGHTS.accel * 5;
+      scores[n] += -Math.abs(n - mv) * (vol/3) * WEIGHTS.volatility * 2;
+    }
+    for (let n = 0; n < 10; n++) scores[n] += -Math.abs(n - mv) * WEIGHTS.chaos * 2;
+    const [nz, zp] = this.zn.predict();
+    if (nz){
+      for (let n = 0; n < 10; n++){
+        const ok = (CAT(n) === 'SMALL' && nz === 'S') || (CAT(n) === 'BIG' && nz === 'B');
+        if (ok) scores[n] += zp[nz] * WEIGHTS.zone_trans * 100;
+      }
+    }
+    const [nc, cp] = this.cl.predict();
+    if (nc){
+      for (let n = 0; n < 10; n++){
+        const isRed = (n === 0 || n === 2 || n === 4 || n === 6 || n === 8);
+        const ok = (nc === 'R' && isRed) || (nc === 'G' && !isRed);
+        if (ok) scores[n] += cp[nc] * WEIGHTS.color_trans * 100;
+      }
+    }
+    const [npar, pp2] = this.pr.predict();
+    if (npar){
+      for (let n = 0; n < 10; n++){
+        const isEven = n % 2 === 0;
+        const ok = (npar === 'E' && isEven) || (npar === 'O' && !isEven);
+        if (ok) scores[n] += pp2[npar] * WEIGHTS.parity_trans * 100;
+      }
+    }
+    const gr = this.gp.all_ratios();
+    for (let n = 0; n < 10; n++) scores[n] += gr[n] * WEIGHTS.gap_return * 15;
+    return scores;
+  }
+  predict(){
+    if (this.h.length < 5) return null;
+    const scores = this.compute();
+    const srt = Object.keys(scores).map(k => [parseInt(k), scores[k]]).sort((a,b) => b[1] - a[1]);
+    const top3 = srt.slice(0, 3);
+    const mx = Math.max(...Object.values(scores).map(Math.abs)) || 1;
+    const norm = {};
+    for (let n = 0; n < 10; n++) norm[n] = Math.round((50 + (scores[n]/mx) * 50) * 10) / 10;
+    let strengthPts = 0;
+    let ms = 0;
+    for (const [o, m] of [[1,1],[2,1.5],[3,2],[4,2.5],[5,3]]) ms += this.mk.strength(o) * m;
+    if (ms > 5) strengthPts++;
+    if (ms > 10) strengthPts++;
+    if (ms > 20) strengthPts++;
+    const patTotal = sum(Object.values(this.pt.predict()));
+    if (patTotal >= 3) strengthPts++;
+    if (patTotal >= 6) strengthPts++;
+    const [nz, zp] = this.zn.predict();
+    if (nz && (zp[nz]||0) > 0.5) strengthPts++;
+    if (nz && (zp[nz]||0) > 0.7) strengthPts++;
+    const [nc, cp] = this.cl.predict();
+    if (nc && (cp[nc]||0) > 0.5) strengthPts++;
+    if (nc && (cp[nc]||0) > 0.7) strengthPts++;
+    const [npar, pp2] = this.pr.predict();
+    if (npar && (pp2[npar]||0) > 0.5) strengthPts++;
+    if (npar && (pp2[npar]||0) > 0.7) strengthPts++;
+    const ent = this.mk.entropy(2);
+    if (ent > 0 && ent < 2.0) strengthPts++;
+    const gr = this.gp.all_ratios();
+    if ((gr[top3[0][0]] || 0) > 0.8) strengthPts++;
+    const gap = norm[top3[0][0]] - norm[top3[1][0]];
+    const ptsScore = strengthPts * 3.33;
+    const gapScore = Math.min(35, gap * 4);
+    let conf = 1 + ptsScore + gapScore;
+    if (ent > 0 && ent < 1.0) conf += 8;
+    else if (ent > 0 && ent < 2.0) conf += 4;
+    if (ms > 20) conf += 5;
+    else if (ms > 10) conf += 2;
+    if (patTotal >= 8) conf += 5;
+    else if (patTotal >= 5) conf += 2;
+    conf = Math.min(100, Math.max(1, conf));
+    conf = Math.round(conf * 100) / 100;
+    return {
+      top: top3[0][0], topScore: norm[top3[0][0]],
+      runnerUp: top3[1][0], runnerUpScore: norm[top3[1][0]],
+      third: top3[2][0], thirdScore: norm[top3[2][0]],
+      confidence: Math.round(conf),
+      confidenceDecimal: conf,
+      strengthPts,
+      allScores: norm
+    };
+  }
+}
+
+/* ============================================================
+   STATE
+   ============================================================ */
+let HISTORY = [];
+let VIEW_MODE = 'user';
+
+/* ============================================================
+   UI: AUTH
+   ============================================================ */
+function switchTab(tab){
+  document.querySelectorAll('.auth-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  document.getElementById('pane-login').style.display  = tab === 'login'  ? 'block' : 'none';
+  document.getElementById('pane-signup').style.display = tab === 'signup' ? 'block' : 'none';
+  document.getElementById('pane-admin').style.display  = tab === 'admin'  ? 'block' : 'none';
+  ['loginMsg','signupMsg','adminMsg'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.className = 'msg'; el.textContent = ''; }
+  });
+}
+function showMsg(id, text, ok){
+  const el = document.getElementById(id);
+  el.textContent = text;
+  el.className = 'msg ' + (ok ? 'ok' : 'err');
+}
+function showAuth(){
+  document.getElementById('authScreen').style.display  = 'flex';
+  document.getElementById('adminScreen').style.display = 'none';
+  document.getElementById('appWrap').style.display     = 'none';
+}
+async function showApp(username, role){
+  document.getElementById('authScreen').style.display  = 'none';
+  document.getElementById('adminScreen').style.display = 'none';
+  document.getElementById('appWrap').style.display     = 'block';
+  document.getElementById('uName').textContent = username;
+  const rt = document.getElementById('uRole');
+  rt.textContent = role === 'admin' ? 'ADMIN' : 'USER';
+  rt.className = 'tag ' + (role === 'admin' ? 'tag-gold' : 'tag-blue');
+  document.getElementById('backAdminBtn').style.display =
+    (role === 'admin' && VIEW_MODE === 'admin-tool') ? 'inline-block' : 'none';
+
+  try {
+    const r = await api('/api/history');
+    HISTORY = Array.isArray(r.history) ? r.history : [];
+    document.getElementById('historyInput').value = HISTORY.join(' ');
+    renderHistory();
+    if (HISTORY.length) flashSaveIndicator('saved');
+  } catch(e){
+    HISTORY = [];
+    renderHistory();
+  }
+}
+async function showAdmin(){
+  document.getElementById('authScreen').style.display  = 'none';
+  document.getElementById('appWrap').style.display     = 'none';
+  document.getElementById('adminScreen').style.display = 'flex';
+  await refreshAdmin();
+}
+async function refreshAdmin(){
+  await Promise.all([renderAdminStats(), renderUsers(), renderActivity()]);
+}
+
+/* ============================================================
+   AUTH ACTIONS
+   ============================================================ */
+async function doLogin(){
+  const u = document.getElementById('loginUser').value.trim();
+  const p = document.getElementById('loginPass').value;
+  if (!u || !p){ showMsg('loginMsg', '⚠️ Sila isi semua medan.', false); return; }
+  if (u.toLowerCase() === 'admin'){ showMsg('loginMsg', '🛡️ Guna tab Admin.', false); return; }
+  try {
+    const r = await api('/api/auth/login', { method:'POST', body:{ username:u, password:p }});
+    setToken(r.token); setCurrentUser(r.user);
+    document.getElementById('loginPass').value = '';
+    showMsg('loginMsg', '✅ Berjaya masuk…', true);
+    setTimeout(async () => {
+      VIEW_MODE = 'user';
+      await showApp(r.user.username, r.user.role);
+      toast('👋 Selamat datang, ' + r.user.username);
+    }, 350);
+  } catch(e){ showMsg('loginMsg', '❌ ' + e.message, false); }
+}
+async function doSignup(){
+  const u = document.getElementById('suUser').value.trim();
+  const p = document.getElementById('suPass').value;
+  const p2 = document.getElementById('suPass2').value;
+  if (!/^[A-Za-z0-9_]{3,20}$/.test(u)){ showMsg('signupMsg','⚠️ Nama: 3-20 aksara.',false); return; }
+  if (p.length < 4){ showMsg('signupMsg','⚠️ Kata laluan min 4 aksara.',false); return; }
+  if (p !== p2){ showMsg('signupMsg','⚠️ Kata laluan tidak sepadan.',false); return; }
+  try {
+    const r = await api('/api/auth/signup', { method:'POST', body:{ username:u, password:p }});
+    setToken(r.token); setCurrentUser(r.user);
+    document.getElementById('suUser').value = '';
+    document.getElementById('suPass').value = '';
+    document.getElementById('suPass2').value = '';
+    showMsg('signupMsg', '✅ Akaun dicipta!', true);
+    setTimeout(async () => {
+      VIEW_MODE = 'user';
+      await showApp(r.user.username, r.user.role);
+      toast('🎉 Akaun berjaya dicipta');
+    }, 450);
+  } catch(e){ showMsg('signupMsg', '❌ ' + e.message, false); }
+}
+async function doAdminLogin(){
+  const u = document.getElementById('adUser').value.trim();
+  const p = document.getElementById('adPass').value;
+  try {
+    const r = await api('/api/auth/admin-login', { method:'POST', body:{ username:u, password:p }});
+    setToken(r.token); setCurrentUser(r.user);
+    document.getElementById('adPass').value = '';
+    showMsg('adminMsg', '✅ Berjaya! Membuka panel…', true);
+    setTimeout(async () => { await showAdmin(); toast('🛡️ Selamat datang, Admin'); }, 350);
+  } catch(e){ showMsg('adminMsg', '❌ ' + e.message, false); }
+}
+async function logout(){
+  try { await api('/api/auth/logout', { method:'POST' }); } catch(e){}
+  setToken(''); setCurrentUser(null);
+  HISTORY = [];
+  document.getElementById('historyInput').value = '';
+  document.getElementById('result').style.display = 'none';
+  document.getElementById('backtestOut').style.display = 'none';
+  VIEW_MODE = 'user';
+  showAuth();
+  toast('🚪 Anda telah log keluar');
+}
+
+/* ============================================================
+   AUTO-SAVE KE SERVER
+   ============================================================ */
+let _saveTimer = null;
+async function saveHistory(silent){
+  if (!AUTH_TOKEN) return;
+  try {
+    await api('/api/history', { method:'POST', body:{ history: HISTORY.slice(0, 300) }});
+    if (!silent) flashSaveIndicator('saved');
+  } catch(e){
+    if (e.status === 401) logout();
+  }
+}
+async function clearSavedHistory(){
+  if (!AUTH_TOKEN) return;
+  try { await api('/api/history', { method:'DELETE' }); } catch(e){}
+}
+function flashSaveIndicator(state){
+  const el = document.getElementById('saveIndicator');
+  if (!el) return;
+  el.classList.remove('saving','saved','show');
+  if (state === 'saving'){
+    el.textContent = '⏳ Menyimpan…';
+    el.classList.add('saving','show');
+  } else {
+    el.textContent = '💾 Disimpan';
+    el.classList.add('saved','show');
+    clearTimeout(el._hide);
+    el._hide = setTimeout(() => el.classList.remove('show'), 1800);
+  }
+}
+function scheduleSave(){
+  if (!AUTH_TOKEN) return;
+  flashSaveIndicator('saving');
+  clearTimeout(_saveTimer);
+  _saveTimer = setTimeout(() => saveHistory(), 700);
+}
+async function logActivity(action, detail = ''){
+  if (!AUTH_TOKEN) return;
+  try { await api('/api/activity', { method:'POST', body:{ action, detail }}); } catch(e){}
+}
+
+/* ============================================================
+   ADMIN: RENDER
+   ============================================================ */
+async function renderAdminStats(){
+  try {
+    const s = await api('/api/admin/stats');
+    document.getElementById('adminStats').innerHTML = `
+      <div class="stat"><div class="k">Jumlah Pengguna</div><div class="v">${s.totalUsers}</div></div>
+      <div class="stat"><div class="k">Aktif</div><div class="v" style="color:#81c784">${s.active}</div></div>
+      <div class="stat"><div class="k">Dibanned</div><div class="v" style="color:#ef5350">${s.banned}</div></div>
+      <div class="stat"><div class="k">Jumlah Log Masuk</div><div class="v">${s.totalLogins}</div></div>
+      <div class="stat"><div class="k">Aktiviti Hari Ini</div><div class="v">${s.todayActivity}</div></div>
+      <div class="stat"><div class="k">Jumlah Log</div><div class="v">${s.totalLogs}</div></div>
+    `;
+  } catch(e){}
+}
+async function renderUsers(){
+  try {
+    const r = await api('/api/admin/users');
+    const users = r.users;
+    const el = document.getElementById('userList');
+    if (!users.length){ el.innerHTML = '<div class="empty">Tiada pengguna berdaftar lagi.</div>'; return; }
+    el.innerHTML = users.map(u => `
+      <div class="urow ${u.banned ? 'banned' : ''}">
+        <div style="flex:1;min-width:180px">
+          <div class="uname">
+            ${esc(u.username)}
+            ${u.banned ? '<span class="tag tag-red">BANNED</span>' : '<span class="tag tag-green">AKTIF</span>'}
+          </div>
+          <div class="umeta">
+            📅 Dicipta: ${fmtDate(u.createdAt)}<br>
+            🔑 Log masuk: ${u.loginCount || 0}x • 🕐 Terakhir: ${u.lastLogin ? timeAgo(u.lastLogin) : '—'}
+          </div>
+        </div>
+        <div class="ubtns">
+          <button class="${u.banned ? 'btn-green' : 'btn-red'}" onclick="toggleBan('${esc(u.username)}')">
+            ${u.banned ? '✅ Buka Ban' : '🚫 Ban'}
+          </button>
+          <button class="btn-ghost" onclick="adminResetPass('${esc(u.username)}')">🔑 Reset</button>
+          <button class="btn-ghost" onclick="adminDeleteUser('${esc(u.username)}')">🗑️</button>
+        </div>
+      </div>
+    `).join('');
+  } catch(e){}
+}
+async function renderActivity(){
+  try {
+    const r = await api('/api/admin/activity');
+    const filter = (document.getElementById('actFilter').value || '').trim().toLowerCase();
+    let logs = r.activity;
+    if (filter) logs = logs.filter(l => (l.user || '').toLowerCase().includes(filter));
+    const el = document.getElementById('activityLog');
+    if (!logs.length){ el.innerHTML = '<div class="empty">Tiada rekod aktiviti.</div>'; return; }
+    const colorFor = a => {
+      if (a.startsWith('LOGIN_FAIL') || a.startsWith('ADMIN_LOGIN_FAIL') || a === 'LOGIN_BLOCKED') return '#ef5350';
+      if (a.startsWith('BAN') || a === 'DELETE_USER') return '#ef5350';
+      if (a.startsWith('ADMIN') || a === 'CREATE_USER' || a === 'CLEAR_LOG') return '#ffc107';
+      if (a === 'LOGIN' || a === 'SIGNUP') return '#66bb6a';
+      if (a === 'LOGOUT') return '#8b8ba8';
+      return '#c3aaff';
+    };
+    el.innerHTML = logs.slice(0, 400).map(l => `
+      <div class="actrow">
+        <div class="tm">${fmtDate(l.time)}</div>
+        <div class="bd">
+          <span class="us">${esc(l.user || '?')}</span>
+          <span style="color:${colorFor(l.action)};font-weight:700"> · ${esc(l.action)}</span>
+          ${l.detail ? '<span style="color:#7a7a99"> — ' + esc(l.detail) + '</span>' : ''}
+        </div>
+      </div>
+    `).join('');
+  } catch(e){}
+}
+
+/* ============================================================
+   ADMIN: ACTIONS
+   ============================================================ */
+async function adminCreateUser(){
+  const u = document.getElementById('newUserName').value.trim();
+  const p = document.getElementById('newUserPass').value;
+  try {
+    await api('/api/admin/users', { method:'POST', body:{ username:u, password:p }});
+    document.getElementById('newUserName').value = '';
+    document.getElementById('newUserPass').value = '';
+    showMsg('createMsg', `✅ Akaun "${u}" dicipta.`, true);
+    toast('✅ Akaun dicipta');
+    await refreshAdmin();
+  } catch(e){ showMsg('createMsg', '❌ ' + e.message, false); }
+}
+async function toggleBan(username){
+  try {
+    const users = await api('/api/admin/users');
+    const found = users.users.find(x => x.username === username);
+    if (!found) return;
+    await api(`/api/admin/users/${encodeURIComponent(username)}/${found.banned ? 'unban' : 'ban'}`, { method:'POST' });
+    toast(found.banned ? '✅ Dibuka semula' : '🚫 Dibanned');
+    await refreshAdmin();
+  } catch(e){ toast('⚠️ ' + e.message); }
+}
+async function adminResetPass(username){
+  const np = prompt(`Kata laluan baharu untuk "${username}" (min 4):`);
+  if (np === null) return;
+  if (np.length < 4){ toast('⚠️ Minimum 4 aksara'); return; }
+  try {
+    await api(`/api/admin/users/${encodeURIComponent(username)}/reset-password`, {
+      method:'POST', body:{ password: np }
+    });
+    toast('🔑 Kata laluan direset');
+    await renderActivity();
+  } catch(e){ toast('⚠️ ' + e.message); }
+}
+async function adminDeleteUser(username){
+  if (!confirm(`Padam akaun "${username}"?`)) return;
+  try {
+    await api(`/api/admin/users/${encodeURIComponent(username)}`, { method:'DELETE' });
+    toast('🗑️ Akaun dipadam');
+    await refreshAdmin();
+  } catch(e){ toast('⚠️ ' + e.message); }
+}
+async function clearActivity(){
+  if (!confirm('Kosongkan semua log aktiviti?')) return;
+  try {
+    await api('/api/admin/activity', { method:'DELETE' });
+    toast('🧹 Log dikosongkan');
+    await refreshAdmin();
+  } catch(e){}
+}
+async function openToolAsAdmin(){
+  VIEW_MODE = 'admin-tool';
+  await showApp('admin', 'admin');
+  await logActivity('OPEN_TOOL', 'Admin buka alat Wingo');
+  toast('🧪 Mod alat Wingo (admin)');
+}
+function backToAdmin(){
+  VIEW_MODE = 'user';
+  showAdmin();
+}
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function fmtDate(ts){
+  if (!ts) return '—';
+  const d = new Date(ts);
+  const pad = n => String(n).padStart(2,'0');
+  return `${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+function timeAgo(ts){
+  const s = Math.floor((Date.now()-ts)/1000);
+  if (s < 60) return s + 's lalu';
+  if (s < 3600) return Math.floor(s/60) + 'm lalu';
+  if (s < 86400) return Math.floor(s/3600) + 'j lalu';
+  return Math.floor(s/86400) + 'h lalu';
+}
+function ballStyle(n){
+  if (n === 0) return 'linear-gradient(135deg,#e53935 0%,#8e24aa 100%)';
+  if (n === 5) return 'linear-gradient(135deg,#43a047 0%,#8e24aa 100%)';
+  return (n % 2 === 1)
+    ? 'linear-gradient(135deg,#2e7d32 0%,#4caf50 100%)'
+    : 'linear-gradient(135deg,#c62828 0%,#ef5350 100%)';
+}
+function kualiti(y){
+  if (y >= 85) return { label:"🔥 SANGAT KUAT",  bar:"█████" };
+  if (y >= 65) return { label:"💪 KUAT",         bar:"████░" };
+  if (y >= 45) return { label:"⚡ SEDERHANA",     bar:"███░░" };
+  if (y >= 25) return { label:"🌤️ LEMAH",        bar:"██░░░" };
+  return              { label:"❄️ SANGAT LEMAH", bar:"█░░░░" };
+}
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._tm);
+  t._tm = setTimeout(() => t.classList.remove('show'), 2400);
+}
+function renderHistory(){
+  const el = document.getElementById('historyBalls');
+  if (!HISTORY.length){ el.innerHTML = '<span style="color:var(--dim);font-size:12.5px">Belum ada data…</span>'; return; }
+  el.innerHTML = HISTORY.slice(0, 60).map((n,i) =>
+    `<div class="ball sm" style="background:${ballStyle(n)};animation-delay:${Math.min(i*12,300)}ms">${n}</div>`
+  ).join('') + (HISTORY.length > 60
+      ? `<div class="ball sm ghost">+${HISTORY.length-60}</div>` : '');
+}
+function parseHistory(raw){
+  const parts = raw.replace(/,/g, ' ').split(/\s+/).filter(Boolean);
+  const nums = [];
+  for (const p of parts){
+    if (/^\d+$/.test(p)){
+      if (p.length === 1) nums.push(parseInt(p, 10));
+      else for (const ch of p) nums.push(parseInt(ch, 10));
+    }
+  }
+  return nums;
+}
+
+/* ============================================================
+   USER ACTIONS
+   ============================================================ */
+function loadDemo(){
+  const demo = [];
+  for (let i = 0; i < 40; i++) demo.push(Math.floor(Math.random()*10));
+  HISTORY = demo;
+  document.getElementById('historyInput').value = demo.join(' ');
+  renderHistory();
+  saveHistory();
+  logActivity('LOAD_DEMO', 'Muatkan 40 nombor demo');
+  toast('🎲 40 nombor demo dimuatkan');
+}
+function clearAll(){
+  HISTORY = [];
+  document.getElementById('historyInput').value = '';
+  document.getElementById('result').style.display = 'none';
+  document.getElementById('backtestOut').style.display = 'none';
+  renderHistory();
+  clearSavedHistory();
+  flashSaveIndicator('saved');
+  logActivity('CLEAR_DATA', 'Padam semua data sejarah');
+  toast('🗑️ Semua data dipadam');
+}
+function quickAdd(){
+  const inp = document.getElementById('quickNum');
+  const v = parseInt(inp.value, 10);
+  if (isNaN(v) || v < 0 || v > 9){ toast('⚠️ Masukkan nombor 0-9'); return; }
+  HISTORY.unshift(v);
+  inp.value = '';
+  inp.focus();
+  document.getElementById('historyInput').value = HISTORY.slice(0, 100).join(' ');
+  renderHistory();
+  saveHistory();
+  logActivity('QUICK_ADD', `Tambah nombor ${v}`);
+  runAnalysis(true);
+}
+
+/* ============================================================
+   ANALYSIS
+   ============================================================ */
+function runAnalysis(silent){
+  const raw = document.getElementById('historyInput').value;
+  const parsed = parseHistory(raw);
+  if (parsed.length) HISTORY = parsed;
+  if (HISTORY.length < 5){
+    if (!silent) toast('⚠️ Perlu sekurang-kurangnya 5 nombor');
+    return;
+  }
+  const engine = new NeuralEngine(HISTORY);
+  const r = engine.predict();
+  if (!r){ toast('⚠️ Data tidak mencukupi'); return; }
+
+  const box = document.getElementById('result');
+  box.style.display = 'block';
+
+  document.getElementById('bigBallWrap').innerHTML =
+    `<div class="ball xl" style="background:${ballStyle(r.top)}">${r.top}</div>`;
+  document.getElementById('resNum').innerHTML =
+    `${COLOR[r.top]} &nbsp;Nombor <b style="color:#ffc107">${r.top}</b> <small>${CAT(r.top)}</small>`;
+  document.getElementById('resConf').innerHTML =
+    `${r.confidenceDecimal.toFixed(2)}<span>%</span>`;
+
+  const q = kualiti(r.confidenceDecimal);
+  document.getElementById('resQuality').innerHTML =
+    `${q.label} <span style="letter-spacing:2px;color:var(--gold)">${q.bar}</span>`;
+
+  const bar = document.getElementById('confBar');
+  bar.style.width = '0%';
+  setTimeout(() => bar.style.width = Math.max(2, r.confidenceDecimal) + '%', 60);
+
+  document.getElementById('resZone').textContent   = CAT(r.top);
+  document.getElementById('resColor').textContent  = COLOR_NAME[r.top];
+  document.getElementById('resParity').textContent = PARITY(r.top);
+  document.getElementById('resStrength').textContent = r.strengthPts + ' / 12';
+
+  const medals = ['🥇','🥈','🥉'];
+  const labels = ['UTAMA','CADANGAN 2','CADANGAN 3'];
+  document.getElementById('top3').innerHTML = [r.top, r.runnerUp, r.third].map((n,i) => `
+    <div class="t">
+      <div class="rank">${medals[i]} ${labels[i]}</div>
+      <div class="n" style="color:${n===r.top?'#ffc107':'var(--txt)'}">${n}</div>
+      <div class="s">${COLOR[n]} ${COLOR_NAME[n]}</div>
+      <div class="s">Skor ${(i===0?r.topScore:i===1?r.runnerUpScore:r.thirdScore).toFixed(1)}</div>
+    </div>
+  `).join('');
+
+  const entries = Object.keys(r.allScores).map(k => [parseInt(k), r.allScores[k]])
+                        .sort((a,b) => b[1] - a[1]);
+  document.getElementById('scoresGrid').innerHTML = entries.map(([n, sc]) => `
+    <div class="score-item ${n === r.top ? 'pick' : ''}">
+      <div class="sn" style="color:${n===r.top?'#ffc107':'var(--txt)'}">${n}</div>
+      <div class="sv">${sc.toFixed(1)}</div>
+      <div class="mini-bar"><i style="width:${Math.max(3, sc)}%"></i></div>
+    </div>
+  `).join('');
+
+  saveHistory(true);
+  if (!silent) logActivity('ANALISIS',
+    `Ramalan: ${r.top} (2:${r.runnerUp}, 3:${r.third}) • Conf ${r.confidenceDecimal.toFixed(2)}% • Data: ${HISTORY.length}`);
+
+  box.scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+/* ============================================================
+   BACKTEST
+   ============================================================ */
+function runBacktest(){
+  const raw = document.getElementById('historyInput').value;
+  const parsed = parseHistory(raw);
+  if (parsed.length) HISTORY = parsed;
+  const out = document.getElementById('backtestOut');
+  out.style.display = 'block';
+  const testSize = 20;
+  if (HISTORY.length < testSize + 10){
+    out.innerHTML = '<div class="verdict v-mid">⚠️ Perlu sekurang-kurangnya 30 nombor.</div>';
+    return;
+  }
+  out.innerHTML = '<div style="color:var(--dim);font-size:13px;padding:10px">⏳ Menjalankan backtest…</div>';
+  setTimeout(() => {
+    let hits1=0, hits2=0, hits3=0, hitsBS=0, hitsCol=0, hitsPar=0;
+    let total=0, confSum=0;
+    const logs = [];
+    for (let i = 0; i < testSize; i++){
+      const train = HISTORY.slice(i+1);
+      if (train.length < 10) continue;
+      const actual = HISTORY[i];
+      const engine = new NeuralEngine(train);
+      const r = engine.predict();
+      if (!r) continue;
+      total++;
+      confSum += r.confidenceDecimal;
+      const hit1 = r.top === actual;
+      const hit2 = actual === r.top || actual === r.runnerUp;
+      const hit3 = actual === r.top || actual === r.runnerUp || actual === r.third;
+      const isRed = n => (n===0||n===2||n===4||n===6||n===8);
+      const bsOk    = CAT(r.top) === CAT(actual);
+      const colorOk = (isRed(r.top) && isRed(actual)) || (!isRed(r.top) && !isRed(actual));
+      const parOk   = PARITY(r.top) === PARITY(actual);
+      if (hit1) hits1++;
+      if (hit2) hits2++;
+      if (hit3) hits3++;
+      if (bsOk) hitsBS++;
+      if (colorOk) hitsCol++;
+      if (parOk) hitsPar++;
+      const cls = hit1 ? 'ok' : (hit3 ? 'mid' : 'no');
+      const mark = hit1 ? '✅' : (hit3 ? '🟡' : '❌');
+      logs.push(`<span class="${cls}">${mark} Ramal:${r.top} (${r.runnerUp},${r.third}) | Sebenar:${actual} | Conf:${r.confidenceDecimal.toFixed(2)}%</span>`);
+    }
+    if (!total){ out.innerHTML = '<div class="verdict v-mid">⚠️ Tiada sampel sah.</div>'; return; }
+    const p1 = hits1/total*100, p2 = hits2/total*100, p3 = hits3/total*100;
+    const pbs = hitsBS/total*100, pc = hitsCol/total*100, pp = hitsPar/total*100;
+    const avgConf = confSum/total;
+    let verdict, vcls;
+    if (p1 > 15){ verdict = '🟢 CEMERLANG'; vcls='v-good'; }
+    else if (p1 > 10){ verdict = '🟡 SEDERHANA'; vcls='v-mid'; }
+    else { verdict = '🔴 SAMA SEPERTI RAWAK'; vcls='v-bad'; }
+    out.innerHTML = `
+      <table>
+        <tr><td>🎯 Sampel diuji</td><td>${total}</td></tr>
+        <tr><td>🥇 Top-1 tepat</td><td>${hits1}/${total} <span style="color:${p1>10?'#81c784':'#ef5350'}">${p1.toFixed(1)}%</span> <span class="base">| 10%</span></td></tr>
+        <tr><td>🥈 Top-2 tepat</td><td>${hits2}/${total} <span style="color:${p2>20?'#81c784':'#ef5350'}">${p2.toFixed(1)}%</span> <span class="base">| 20%</span></td></tr>
+        <tr><td>🥉 Top-3 tepat</td><td>${hits3}/${total} <span style="color:${p3>30?'#81c784':'#ef5350'}">${p3.toFixed(1)}%</span> <span class="base">| 30%</span></td></tr>
+        <tr><td>📏 B/S betul</td><td>${hitsBS}/${total} <span style="color:${pbs>50?'#81c784':'#ef5350'}">${pbs.toFixed(1)}%</span> <span class="base">| 50%</span></td></tr>
+        <tr><td>🎨 Warna betul</td><td>${hitsCol}/${total} <span style="color:${pc>50?'#81c784':'#ef5350'}">${pc.toFixed(1)}%</span> <span class="base">| 50%</span></td></tr>
+        <tr><td>⚖️ Parity betul</td><td>${hitsPar}/${total} <span style="color:${pp>50?'#81c784':'#ef5350'}">${pp.toFixed(1)}%</span> <span class="base">| 50%</span></td></tr>
+        <tr><td>📈 Purata Conf</td><td>${avgConf.toFixed(2)}%</td></tr>
+      </table>
+      <div class="verdict ${vcls}">${verdict}</div>
+      <div class="detail-log">${logs.join('<br>')}</div>
+    `;
+    logActivity('BACKTEST',
+      `Top-1 ${p1.toFixed(1)}% • Top-3 ${p3.toFixed(1)}% • B/S ${pbs.toFixed(1)}% • ${total} sampel`);
+  }, 40);
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+document.getElementById('quickNum').addEventListener('keydown', e => { if (e.key === 'Enter') quickAdd(); });
+document.getElementById('historyInput').addEventListener('input', () => {
+  const p = parseHistory(document.getElementById('historyInput').value);
+  if (p.length){ HISTORY = p; renderHistory(); }
+  scheduleSave();
+});
+document.getElementById('loginPass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+document.getElementById('loginUser').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+document.getElementById('suPass2').addEventListener('keydown', e => { if (e.key === 'Enter') doSignup(); });
+document.getElementById('adPass').addEventListener('keydown', e => { if (e.key === 'Enter') doAdminLogin(); });
+document.getElementById('newUserPass').addEventListener('keydown', e => { if (e.key === 'Enter') adminCreateUser(); });
+
+async function boot(){
+  if (!AUTH_TOKEN){ showAuth(); return; }
+  try {
+    const r = await api('/api/auth/me');
+    if (r.user.role === 'admin'){ await showAdmin(); }
+    else {
+      VIEW_MODE = 'user';
+      await showApp(r.user.username, 'user');
+    }
+  } catch(e){
+    setToken(''); setCurrentUser(null);
+    showAuth();
+  }
+}
+
+renderHistory();
+boot();
+</script>
+</body>
+</html>
